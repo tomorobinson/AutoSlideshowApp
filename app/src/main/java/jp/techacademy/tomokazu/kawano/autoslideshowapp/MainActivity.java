@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private static final String PLAY = "再生";
     private static final String STOP = "停止";
-    int buttonStatus = 0; //0:Play, 1:Stop
+    boolean buttonStatus = true; //true:Play, false:Stop
 
     ImageView imageView;
     Button nextButton;
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.play_button:
-                if (buttonStatus == 0) {
+                if (buttonStatus) {
                     //再生時
                     playSlideShow();
                 } else {
@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                // UIスレッドに描画依頼
                 mHandler.post(new Runnable() {
                     // UIスレッドへ描画依頼
                     @Override
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nextButton.setEnabled(false);
         backButton.setEnabled(false);
         slideShow();
-        buttonStatus = 1; //ボタンステータスを停止に変更
+        buttonStatus = false; //ボタンステータスを停止に変更
     }
 
     private void stopSlideShow() {
@@ -180,12 +181,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playButton.setText(PLAY);
         nextButton.setEnabled(true);
         backButton.setEnabled(true);
-        buttonStatus = 0; //ボタンステータスを再生に変更
+        buttonStatus = true; //ボタンステータスを再生に変更
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         cursor.close();
     }
 }
